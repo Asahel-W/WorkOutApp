@@ -13,9 +13,11 @@ class CreateDB:
         self._cur = self._con.cursor()
 
     def updateDB(self, query):
-        try:
-            for row in self._cur.execute(query):
-                print(row)
-            self._con.commit()
-        except sqlite3.OperationalError as err:
-            print(err)
+        if sqlite3.complete_statement(query):
+            try:
+                query = query.strip()
+                for row in self._cur.execute(query):
+                    print(row)
+                self._con.commit()
+            except sqlite3.OperationalError as err:
+                print(err.args[0])
